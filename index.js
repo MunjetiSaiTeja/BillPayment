@@ -192,7 +192,7 @@ app.post('/pay/:billType', (req, res) => {
     payments[username].push(paymentRecord);
     savePayments(payments);
 
-    res.json({ message: ${username} paid ₹${amount} for ${paymentType}, payments: payments[username] });
+    res.json({ message: `${username} paid ₹${amount} for ${paymentType}`, payments: payments[username] });
 });
 
 // ✅ Payment History Route
