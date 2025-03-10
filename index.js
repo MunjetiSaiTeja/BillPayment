@@ -1,68 +1,47 @@
-const jsonServer = require("json-server"); // importing json-server library
-const server = jsonServer.create();
-const router = jsonServer.router("db.json");
-const middlewares = jsonServer.defaults();
+const jsonServer = require("json-server"); 
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
-const bcrypt = require('bcrypt'); // ✅ Secure Password Hashing
+const bcrypt = require('bcrypt'); 
 const FileStore = require('session-file-store')(session);
+
 const app = express();
 const port = 4000;
+
+// ✅ Define session directory
 const sessionDir = path.join(__dirname, 'sessions');
-server.use(middlewares);
-server.use(router);
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+const usersFilePath = path.join(__dirname, 'users.json');
+const paymentsFilePath = path.join(__dirname, 'payments.json');
 
-app.use(express.static('public1')); // ✅ Serve CSS, images, etc.
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// ✅ Ensure required JSON files exist
+if (!fs.existsSync(usersFilePath)) fs.writeFileSync(usersFilePath, '[]');
+if (!fs.existsSync(paymentsFilePath)) fs.writeFileSync(paymentsFilePath, '{}');
 
-// ✅ Session Setup
+// ✅ Ensure `sessions` directory exists
 if (!fs.existsSync(sessionDir)) {
     console.log("Creating sessions directory...");
     fs.mkdirSync(sessionDir, { recursive: true });
 } else {
-    console.log("Sessions directory already exists. Skipping creation.");
+    console.log("Sessions directory already exists.");
 }
+
+// ✅ Set EJS as the View Engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.static('public1')); 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // ✅ Set up session management
 app.use(session({
-    store: new FileStore({
-        path: sessionDir, // Use existing session directory
-        retries: 0 // Avoid retrying on failure
-    }),
+    store: new FileStore({ path: sessionDir, retries: 0 }),
     secret: 'secretKey123',
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 30 }
 }));
-
-const usersFilePath = path.join(__dirname, 'users.json');
-const paymentsFilePath = path.join(__dirname, 'payments.json');
-
-// ✅ Load Users from `users.json`
-function loadUsers() {
-    if (!fs.existsSync(usersFilePath)) return [];
-    const data = fs.readFileSync(usersFilePath);
-    return JSON.parse(data);
-}
-
-// ✅ Save Users to `users.json`
-function saveUsers(users) {
-    fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2));
-}
-
-function loadPayments() {
-    if (!fs.existsSync(paymentsFilePath)) return {};
-    return JSON.parse(fs.readFileSync(paymentsFilePath));
-}
-
-function savePayments(payments) {
-    fs.writeFileSync(paymentsFilePath, JSON.stringify(payments, null, 2));
-}
 
 // ✅ Middleware: Make `user` Available in All Views
 app.use((req, res, next) => {
@@ -70,156 +49,115 @@ app.use((req, res, next) => {
     next();
 });
 
-// ✅ Home Page Route
-app.get('/', (req, res) => {
-    res.render('home', { user: req.session.user || null });
-});
+// ✅ Load and Save Functions
+function loadUsers() {
+    return JSON.parse(fs.readFileSync(usersFilePath));
+}
 
-// ✅ About Page Route
-app.get('/about', (req, res) => {
-    res.render('about', { user: req.session.user || null });
-});
+function saveUsers(users) {
+    fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2));
+}
 
-// ✅ Contact Page Route
-app.get('/contact', (req, res) => {
-    res.render('contact', { user: req.session.user || null });
-});
+function loadPayments() {
+    return JSON.parse(fs.readFileSync(paymentsFilePath));
+}
 
-// ✅ Handle Contact Form Submission
+function savePayments(payments) {
+    fs.writeFileSync(paymentsFilePath, JSON.stringify(payments, null, 2));
+}
+
+// ✅ Routes
+app.get('/', (req, res) => res.render('home', { user: req.session.user || null }));
+app.get('/about', (req, res) => res.render('about', { user: req.session.user || null }));
+app.get('/contact', (req, res) => res.render('contact', { user: req.session.user || null }));
+
 app.post('/contact', (req, res) => {
-    const { name, email, message } = req.body;
-    console.log(`New Contact Form Submission:
-        Name: ${name}
-        Email: ${email}
-        Message: ${message}
-    `);
+    console.log(`Contact Form Submission: ${JSON.stringify(req.body)}`);
     res.send("<h2>Thank you! Your message has been received.</h2> <a href='/'>Go Back</a>");
 });
 
-// ✅ Show Login & Signup Page Dynamically
-app.get('/login', (req, res) => {
-    res.render('register', { user: req.session.user || null, showSignup: false });
-});
+app.get('/login', (req, res) => res.render('register', { user: req.session.user || null, showSignup: false }));
+app.get('/register', (req, res) => res.render('register', { user: req.session.user || null, showSignup: true }));
 
-app.get('/register', (req, res) => {
-    res.render('register', { user: req.session.user || null, showSignup: true });
-});
-
-// ✅ Signup Route (With Secure Password Hashing)
+// ✅ Signup
 app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).json({ success: false, message: "Username and password are required." });
-    }
+    if (!username || !password) return res.status(400).json({ success: false, message: "Username and password are required." });
 
     let users = loadUsers();
-    if (users.find(u => u.username === username)) {
-        return res.status(400).json({ success: false, message: "Username already taken!" });
-    }
+    if (users.find(u => u.username === username)) return res.status(400).json({ success: false, message: "Username already taken!" });
 
-    const hashedPassword = await bcrypt.hash(password, 10); // ✅ Hash Password
-    users.push({ username, password: hashedPassword });
-    saveUsers(users); // ✅ Save User to JSON File
+    users.push({ username, password: await bcrypt.hash(password, 10) });
+    saveUsers(users);
 
     req.session.user = username;
     res.json({ success: true, redirect: "/" });
 });
 
-// ✅ Login Route (With Secure Password Verification)
+// ✅ Login
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     let users = loadUsers();
     const user = users.find(u => u.username === username);
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-        return res.status(401).json({ success: false, message: "Invalid credentials" });
-    }
+    if (!user || !(await bcrypt.compare(password, user.password))) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
     req.session.user = username;
     res.json({ success: true, redirect: "/" });
 });
 
-// ✅ Logout Route
+// ✅ Logout
 app.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: "Logout failed. Try again." });
-        }
-        res.redirect('/');
+    req.session.destroy(() => res.redirect('/'));
+});
+
+// ✅ Bill Pages
+const protectedRoutes = ['/bill', '/tax', '/phone', '/electricity'];
+protectedRoutes.forEach(route => {
+    app.get(route, (req, res) => {
+        if (!req.session.user) return res.redirect('/login');
+        res.render(route.substring(1), { user: req.session.user });
     });
 });
 
-app.get('/bill', (req, res) => {
-    if (!req.session.user) return res.redirect('/login'); // ✅ Redirect if not logged in
-    res.render('bill', { user: req.session.user });
-});
-
-app.get('/tax', (req, res) => {
-    if (!req.session.user) return res.redirect('/login');
-    res.render('tax', { user: req.session.user });
-});
-
-app.get('/phone', (req, res) => {
-    if (!req.session.user) return res.redirect('/login');
-    res.render('phone', { user: req.session.user });
-});
-
-app.get('/electricity', (req, res) => {
-    if (!req.session.user) return res.redirect('/login');
-    res.render('electricity', { user: req.session.user });
-});
-
+// ✅ Payment Handling
 app.post('/pay/:billType', (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ success: false, message: "User not logged in" });
-    }
+    if (!req.session.user) return res.status(401).json({ success: false, message: "User not logged in" });
 
     const username = req.session.user;
+    let { amount, taxType } = req.body;
     const billType = req.params.billType;
-    let { amount, taxType } = req.body; // taxType is optional (for tax payments)
     const timestamp = new Date();
 
-    // Ensure amount is a valid number
     amount = parseFloat(amount);
-    if (isNaN(amount) || amount <= 0) {
-        return res.status(400).json({ success: false, message: "Invalid amount" });
-    }
+    if (isNaN(amount) || amount <= 0) return res.status(400).json({ success: false, message: "Invalid amount" });
 
     let payments = loadPayments();
-    if (!payments[username]) {
-        payments[username] = [];
-    }
+    if (!payments[username]) payments[username] = [];
 
-    // ✅ Properly Format Tax Type (e.g., "Income Tax" instead of "Tax (income)")
-    let paymentType = billType;
-    if (taxType) {
-        paymentType = `${taxType.charAt(0).toUpperCase() + taxType.slice(1)} Tax`; // Capitalize first letter
-    }
+    const paymentType = taxType ? `${taxType.charAt(0).toUpperCase() + taxType.slice(1)} Tax` : billType;
+    payments[username].push({ type: paymentType, amount, date: timestamp.toLocaleDateString(), time: timestamp.toLocaleTimeString() });
 
-    const paymentRecord = {
-        type: paymentType,
-        amount,
-        date: timestamp.toLocaleDateString(),
-        time: timestamp.toLocaleTimeString()
-    };
-
-    payments[username].push(paymentRecord);
     savePayments(payments);
-
     res.json({ message: `${username} paid ₹${amount} for ${paymentType}`, payments: payments[username] });
 });
 
-// ✅ Payment History Route
+// ✅ Payment History
 app.get('/history', (req, res) => {
     if (!req.session.user) return res.redirect('/login');
-
     let payments = loadPayments();
-    const userPayments = payments[req.session.user] || [];
-
-    res.render('history', { payments: userPayments });
+    res.render('history', { payments: payments[req.session.user] || [] });
 });
 
-// ✅ Start Server
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-});
+// ✅ Start Express Server
+app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
+
+// ✅ Start JSON Server (on a different port)
+const jsonPort = 5000;
+const jsonServerApp = jsonServer.create();
+const jsonRouter = jsonServer.router("db.json");
+const jsonMiddlewares = jsonServer.defaults();
+
+jsonServerApp.use(jsonMiddlewares);
+jsonServerApp.use(jsonRouter);
+jsonServerApp.listen(jsonPort, () => console.log(`JSON Server running at http://localhost:${jsonPort}`));
