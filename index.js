@@ -21,10 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // ✅ Session Setup
-if (!fs.existsSync(sessionDir)) {
-    fs.mkdirSync(sessionDir, { recursive: true });
-}
-
 app.use(session({
     store: new FileStore({ path: sessionDir }),
     secret: 'secretKey123',
