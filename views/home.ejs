@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBillPayment - Home</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <%- include('header') %>  
+    <header class="hero">
+        <h1>Welcome to eBillPayment</h1>
+        <p>Pay your bills easily and securely.</p>
+        <% if (!user) { %>
+            <a href="/login" class="btn">Get Started</a>
+        <% } else { %>
+            <a href="/bill" class="btn">Go to Dashboard</a>
+        <% } %>
+    </header>
+    <section class="services">
+        <h2>Choose Your Bill Type</h2>
+        <div class="service-container">
+            <div class="service-card">
+                <h3>Tax Payment</h3>
+                <p>Pay your tax bills securely.</p>
+                <a href="/tax" class="btn">Pay Now</a>
+            </div>
+            <div class="service-card">
+                <h3>Phone Bill</h3>
+                <p>Recharge your phone bills.</p>
+                <a href="/phone" class="btn">Pay Now</a>
+            </div>
+            <div class="service-card">
+                <h3>Electricity Bill</h3>
+                <p>Settle your electricity bills easily.</p>
+                <a href="/electricity" class="btn">Pay Now</a>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p>&copy; 2025 eBillPayment. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

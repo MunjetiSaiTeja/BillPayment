@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History</title>
+    <style>
+        /* 🌟 General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E3F2FD;
+            text-align: center;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1565C0;
+            padding: 25px 30px;
+            color: white;
+        }
+
+        .logo a {
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links li {
+            display: inline;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+        
+        h1 {
+            color: #1565C0;
+            margin-top: 20px;
+        }
+
+        /* ✅ Table Styling */
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #1565C0;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        /* 🏁 Zebra Striping */
+        tr:nth-child(even) {
+            background: #F1F8FF;
+        }
+
+        tr:hover {
+            background: #E3F2FD;
+            transition: background 0.3s ease-in-out;
+        }
+
+        p {
+            font-size: 18px;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        /* ✅ Responsive Design */
+        @media (max-width: 768px) {
+            table {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('header') %>  
+
+    <h1>Your Payment History</h1>
+
+    <% if (payments.length === 0) { %>
+        <p>No payments found.</p>
+    <% } else { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Bill Type</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% payments.forEach(payment => { %>
+                    <tr>
+                        <td><%= payment.type %></td>
+                        <td>₹<%= payment.amount %></td>
+                        <td><%= payment.date %></td>
+                        <td><%= payment.time %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+</body>
+</html>

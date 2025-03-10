@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Bill Payment</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #E3F2FD;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1565C0;
+            padding: 25px 30px;
+            color: white;
+        }
+
+        .logo a {
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links li {
+            display: inline;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+        label {
+            font-size: 18px;
+            display: block;
+            margin-top: 20px;
+        }
+        select, input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+        }
+        button {
+            background: #1565C0;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0D47A1;
+        }
+        p {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('header') %>  
+
+    <h1>Phone Bill Payment</h1>
+    <label for="phonePlan">Select Recharge Plan:</label>
+    <select id="phonePlan">
+        <option value="" disabled selected>Select a Plan</option>
+        <option value="199">₹199 - 28 Days, 1.5GB/day</option>
+        <option value="399">₹399 - 56 Days, 2GB/day</option>
+        <option value="599">₹599 - 84 Days, 3GB/day</option>
+    </select>
+
+    <p id="phoneBill"></p>
+    <form id="phoneForm">
+        <button type="submit" disabled>Pay Now</button>
+    </form>
+
+    <script>
+        const phonePlanSelect = document.getElementById("phonePlan");
+        const phoneBill = document.getElementById("phoneBill");
+        const payButton = document.querySelector("button");
+
+        phonePlanSelect.addEventListener("change", () => {
+            if (phonePlanSelect.value) {
+                phoneBill.innerHTML = `Your recharge amount is: <b>₹${phonePlanSelect.value}</b>`;
+                payButton.disabled = false;
+            } else {
+                phoneBill.innerHTML = "";
+                payButton.disabled = true;
+            }
+        });
+
+        document.getElementById("phoneForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            payButton.disabled = true; // Disable button to prevent multiple submissions
+            payButton.textContent = "Processing...";
+
+            try {
+                const amount = parseInt(phonePlanSelect.value);
+                const response = await fetch("/pay/phone", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount })
+                });
+
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                alert("Payment failed. Please try again.");
+                console.error(error);
+            } finally {
+                payButton.disabled = false;
+                payButton.textContent = "Pay Now";
+            }
+        });
+    </script>
+</body>
+</html>

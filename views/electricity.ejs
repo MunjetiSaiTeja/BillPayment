@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Bill Payment</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E3F2FD;
+            text-align: center;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1565C0;
+            padding: 25px 30px;
+            color: white;
+        }
+        .logo a {
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+        select, input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+        }
+        button {
+            background: #1565C0;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background: #0D47A1;
+        }
+        #electricityBill {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('header') %>  
+
+    <div class="container">
+        <h1>Electricity Bill Payment</h1>
+        <label for="electricityUnits">Enter Units Consumed:</label>
+        <input type="number" id="electricityUnits" min="1" placeholder="Units Used">
+
+        <p id="electricityBill"></p>
+        <form id="electricityForm">
+            <button type="submit" disabled>Pay Now</button>
+        </form>
+    </div>
+
+    <script>
+    const electricityUnits = document.getElementById("electricityUnits");
+    const electricityBill = document.getElementById("electricityBill");
+    const payButton = document.querySelector("button");
+
+    // ✅ Function to Calculate Bill Amount Based on Tiered Pricing
+    function calculateElectricityBill(units) {
+        let totalAmount = 0;
+
+        if (units <= 50) {
+            totalAmount = units * 5; // ₹5 per unit
+        } else if (units <= 100) {
+            totalAmount = (50 * 5) + ((units - 50) * 6); // ₹6 per unit after 50
+        } else if (units <= 200) {
+            totalAmount = (50 * 5) + (50 * 6) + ((units - 100) * 7); // ₹7 per unit after 100
+        } else {
+            totalAmount = (50 * 5) + (50 * 6) + (100 * 7) + ((units - 200) * 10); // ₹10 per unit after 200
+        }
+
+        return totalAmount;
+    }
+
+    // ✅ Update Bill Amount Dynamically
+    electricityUnits.addEventListener("input", () => {
+        let units = parseInt(electricityUnits.value);
+        if (units > 0) {
+            let billAmount = calculateElectricityBill(units);
+            electricityBill.innerHTML = `Your bill amount is: <b>₹${billAmount}</b>`;
+            payButton.disabled = false;
+        } else {
+            electricityBill.innerHTML = "";
+            payButton.disabled = true;
+        }
+    });
+
+    // ✅ Handle Payment Submission
+    document.getElementById("electricityForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        payButton.disabled = true;
+        payButton.textContent = "Processing...";
+
+        try {
+            let units = parseInt(electricityUnits.value);
+            let amount = calculateElectricityBill(units);
+
+            const response = await fetch("/pay/electricity", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount })
+            });
+
+            const result = await response.json();
+            alert(result.message);
+        } catch (error) {
+            alert("Payment failed. Please try again.");
+            console.error(error);
+        } finally {
+            payButton.disabled = false;
+            payButton.textContent = "Pay Now";
+        }
+    });
+    </script>
+</body>
+</html>

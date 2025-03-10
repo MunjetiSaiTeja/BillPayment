@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - eBillPayment</title>
+    <style>
+        /* 🌟 General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E3F2FD;
+            text-align: center;
+        }
+
+        /* ✅ Navigation Bar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1565C0;
+            padding: 25px 30px;
+            color: white;
+        }
+
+        .logo a {
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links li {
+            display: inline;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+
+        /* ✅ Contact Section */
+        .contact {
+            padding: 40px;
+            text-align: center;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .contact h1 {
+            font-size: 36px;
+            color: #1565C0;
+        }
+
+        .contact p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .contact-details p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* ✅ Contact Form */
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input, textarea {
+            width: 94%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        button {
+            padding: 12px;
+            background: #1565C0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0D47A1;
+        }
+
+        /* ✅ Footer */
+        footer {
+            background: #1565C0;
+            color: white;
+            padding: 10px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('header') %>  
+
+    <!-- ✅ Contact Section -->
+    <section class="contact">
+        <h1>Contact Us</h1>
+        <p>If you have any questions, feel free to reach out to us.</p>
+
+        <div class="contact-details">
+            <p><b>Email:</b> support@ebillpayment.com</p>
+            <p><b>Phone:</b> +91 98765 43210</p>
+            <p><b>Office Address:</b> Visakhapatnam, India</p>
+        </div>
+
+        <!-- ✅ Contact Form -->
+        <h2>Send Us a Message</h2>
+        <form action="/contact" method="POST">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <!-- ✅ Footer -->
+    <footer>
+        <p>&copy; 2025 eBillPayment. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

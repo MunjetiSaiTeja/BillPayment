@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - eBillPayment</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <%- include('header') %>  
+
+    <h1>Welcome, <%= user %>!</h1>
+    <p>Manage your bills easily from one place.</p>
+
+    <div class="service-container">
+        <div class="service-card">
+            <h3>Tax Payment</h3>
+            <p>Pay your tax bills securely.</p>
+            <a href="/tax" class="btn">Pay Now</a>
+        </div>
+        <div class="service-card">
+            <h3>Phone Bill</h3>
+            <p>Recharge your phone bills.</p>
+            <a href="/phone" class="btn">Pay Now</a>
+        </div>
+        <div class="service-card">
+            <h3>Electricity Bill</h3>
+            <p>Settle your electricity bills easily.</p>
+            <a href="/electricity" class="btn">Pay Now</a>
+        </div>
+    </div>
+
+    <h2>Your Payment History</h2>
+    <a href="/history" class="btn">View History</a>
+
+</body>
+</html>

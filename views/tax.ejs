@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Payment</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E3F2FD;
+            text-align: center;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1565C0;
+            padding: 25px 30px;
+            color: white;
+        }
+        .logo a {
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover {
+            color: #FFD700;
+        }
+        select, input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+        }
+        button {
+            background: #1565C0;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0D47A1;
+        }
+        .tax-option {
+            display: none;
+        }
+        #taxAmount {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('header') %> 
+    <h1>Tax Payment</h1>
+    <p>Select your tax type and provide the necessary details:</p>
+    <label for="taxType">Choose Tax Type:</label>
+    <select id="taxType">
+        <option value="house">House Tax</option>
+        <option value="water">Water Tax</option>
+        <option value="income">Income Tax</option>
+    </select>
+    <div id="taxDetails">
+        <div id="houseTax" class="tax-option">
+            <label>Select Property Size:</label>
+            <select id="houseSize">
+                <option value="2000">Small (Below 1000 sqft) - ₹2000</option>
+                <option value="5000">Medium (1000-2000 sqft) - ₹5000</option>
+                <option value="10000">Large (Above 2000 sqft) - ₹10000</option>
+            </select>
+        </div>
+        <div id="waterTax" class="tax-option">
+            <label>Number of Water Pumps:</label>
+            <input type="number" id="numPumps" min="1" placeholder="Enter number of pumps">
+        </div>
+        <div id="incomeTax" class="tax-option">
+            <label>Select Annual Income:</label>
+            <select id="incomeSlab">
+                <option value="0">Below ₹2.5L - No Tax</option>
+                <option value="5">₹2.5L - ₹5L - 5% Tax</option>
+                <option value="10">₹5L - ₹10L - 10% Tax</option>
+                <option value="20">Above ₹10L - 20% Tax</option>
+            </select>
+            <br>
+            <label>Annual Income:</label>
+            <input type="number" id="annualIncome" placeholder="Enter Your Annual Income">
+        </div>
+    </div>
+    <p id="taxAmount">Total Tax Amount: <b>₹2000</b></p>
+    <form id="taxForm">
+        <button type="submit">Pay Tax</button>
+    </form>
+    <script>
+        const taxTypeSelect = document.getElementById("taxType");
+        const taxAmountText = document.getElementById("taxAmount");
+        const houseTaxDiv = document.getElementById("houseTax");
+        const waterTaxDiv = document.getElementById("waterTax");
+        const incomeTaxDiv = document.getElementById("incomeTax");
+        const houseSizeSelect = document.getElementById("houseSize");
+        const numPumpsInput = document.getElementById("numPumps");
+        const incomeSlabSelect = document.getElementById("incomeSlab");
+        const annualIncomeInput = document.getElementById("annualIncome");
+
+        function calculateTaxAmount() {
+            let taxType = taxTypeSelect.value;
+            let amount = 0;
+            if (taxType === "house") {
+                amount = parseInt(houseSizeSelect.value);
+            } else if (taxType === "water") {
+                let numPumps = parseInt(numPumpsInput.value) || 0;
+                amount = numPumps * 50;
+                if (numPumps > 5) {
+                    amount += 500;
+                }
+            } else if (taxType === "income") {
+                let slab = parseInt(incomeSlabSelect.value);
+                let income = parseInt(annualIncomeInput.value) || 0;
+                amount = (income * slab) / 100;
+            }
+            taxAmountText.innerHTML = `Total Tax Amount: <b>₹${amount}</b>`;
+            return amount;
+        }
+
+        taxTypeSelect.addEventListener("change", () => {
+            houseTaxDiv.style.display = "none";
+            waterTaxDiv.style.display = "none";
+            incomeTaxDiv.style.display = "none";
+            let selectedTax = taxTypeSelect.value;
+            if (selectedTax === "house") houseTaxDiv.style.display = "block";
+            if (selectedTax === "water") waterTaxDiv.style.display = "block";
+            if (selectedTax === "income") incomeTaxDiv.style.display = "block";
+            calculateTaxAmount();
+        });
+
+        houseSizeSelect.addEventListener("change", calculateTaxAmount);
+        numPumpsInput.addEventListener("input", calculateTaxAmount);
+        incomeSlabSelect.addEventListener("change", calculateTaxAmount);
+        annualIncomeInput.addEventListener("input", calculateTaxAmount);
+        
+        document.getElementById("taxForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    const payButton = event.target.querySelector("button");
+    payButton.disabled = true; // Disable button to prevent multiple submissions
+    payButton.textContent = "Processing...";
+
+    try {
+        let taxType = document.getElementById("taxType").value;
+        let amount = calculateTaxAmount();
+
+        const response = await fetch("/pay/tax", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ taxType, amount })
+        });
+
+        const result = await response.json();
+        alert(result.message);
+    } catch (error) {
+        alert("Payment failed. Please try again.");
+        console.error(error);
+    } finally {
+        payButton.disabled = false;
+        payButton.textContent = "Pay Tax";
+    }
+});
+
+    </script>
+</body>
+</html>
