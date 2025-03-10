@@ -7,7 +7,7 @@ const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt'); // ✅ Secure Password Hashing
-
+const FileStore = require('session-file-store')(session);
 const app = express();
 const port = 4000;
 
@@ -22,10 +22,15 @@ app.use(express.json());
 
 // ✅ Session Setup
 app.use(session({
+    store: new FileStore({
+        path: './sessions', // Directory for session files
+        ttl: 1800, // Expiry time in seconds (30 minutes)
+        retries: 2 // Number of retries before failing
+    }),
     secret: 'secretKey123',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, maxAge: 1000 * 60 * 30 }
+    cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 30 }
 }));
 
 const usersFilePath = path.join(__dirname, 'users.json');
