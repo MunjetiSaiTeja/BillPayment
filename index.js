@@ -21,6 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // ✅ Session Setup
+const sessionDir = path.join(__dirname, 'sessions');
+if (!fs.existsSync(sessionDir)) {
+    fs.mkdirSync(sessionDir, { recursive: true });
+}
+
 app.use(session({
     store: new FileStore({
         path: './sessions', // Directory for session files
