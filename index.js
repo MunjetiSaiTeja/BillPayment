@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt'); // ✅ Secure Password Hashing
 const FileStore = require('session-file-store')(session);
 const app = express();
 const port = 4000;
-
+const sessionDir = path.join(__dirname, 'sessions');
 server.use(middlewares);
 server.use(router);
 app.set('view engine', 'ejs');
@@ -21,17 +21,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // ✅ Session Setup
-const sessionDir = path.join(__dirname, 'sessions');
 if (!fs.existsSync(sessionDir)) {
     fs.mkdirSync(sessionDir, { recursive: true });
 }
 
 app.use(session({
-    store: new FileStore({
-        path: './sessions', // Directory for session files
-        ttl: 1800, // Expiry time in seconds (30 minutes)
-        retries: 2 // Number of retries before failing
-    }),
+    store: new FileStore({ path: sessionDir }),
     secret: 'secretKey123',
     resave: false,
     saveUninitialized: false,
