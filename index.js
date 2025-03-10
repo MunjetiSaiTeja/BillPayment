@@ -74,11 +74,11 @@ app.get('/contact', (req, res) => {
 // ✅ Handle Contact Form Submission
 app.post('/contact', (req, res) => {
     const { name, email, message } = req.body;
-    console.log(New Contact Form Submission:
+    console.log(`New Contact Form Submission:
         Name: ${name}
         Email: ${email}
         Message: ${message}
-    );
+    `);
     res.send("<h2>Thank you! Your message has been received.</h2> <a href='/'>Go Back</a>");
 });
 
