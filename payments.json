@@ -1,0 +1,156 @@
+{
+  "abc": [
+    {
+      "type": "phone",
+      "amount": 599,
+      "date": "5/3/2025",
+      "time": "5:17:15 pm"
+    },
+    {
+      "type": "electricity",
+      "amount": 500,
+      "date": "5/3/2025",
+      "time": "5:17:39 pm"
+    },
+    {
+      "type": "electricity",
+      "amount": 550,
+      "date": "5/3/2025",
+      "time": "5:21:02 pm"
+    },
+    {
+      "type": "House Tax",
+      "amount": 2000,
+      "date": "10/3/2025",
+      "time": "8:26:46 pm"
+    },
+    {
+      "type": "Water Tax",
+      "amount": 250,
+      "date": "10/3/2025",
+      "time": "8:31:26 pm"
+    },
+    {
+      "type": "House Tax",
+      "amount": 2000,
+      "date": "10/3/2025",
+      "time": "8:31:35 pm"
+    },
+    {
+      "type": "House Tax",
+      "amount": 5000,
+      "date": "10/3/2025",
+      "time": "8:31:40 pm"
+    },
+    {
+      "type": "House Tax",
+      "amount": 10000,
+      "date": "10/3/2025",
+      "time": "8:31:45 pm"
+    },
+    {
+      "type": "Water Tax",
+      "amount": 250,
+      "date": "10/3/2025",
+      "time": "8:32:49 pm"
+    },
+    {
+      "type": "Income Tax",
+      "amount": 6172.8,
+      "date": "10/3/2025",
+      "time": "8:33:13 pm"
+    },
+    {
+      "type": "phone",
+      "amount": 399,
+      "date": "10/3/2025",
+      "time": "8:34:35 pm"
+    },
+    {
+      "type": "phone",
+      "amount": 199,
+      "date": "10/3/2025",
+      "time": "8:35:07 pm"
+    },
+    {
+      "type": "phone",
+      "amount": 399,
+      "date": "10/3/2025",
+      "time": "8:35:13 pm"
+    },
+    {
+      "type": "phone",
+      "amount": 599,
+      "date": "10/3/2025",
+      "time": "8:35:19 pm"
+    },
+    {
+      "type": "Water Tax",
+      "amount": 250,
+      "date": "10/3/2025",
+      "time": "8:40:58 pm"
+    },
+    {
+      "type": "House Tax",
+      "amount": 5000,
+      "date": "10/3/2025",
+      "time": "8:41:06 pm"
+    },
+    {
+      "type": "Income Tax",
+      "amount": 5000000,
+      "date": "10/3/2025",
+      "time": "8:41:32 pm"
+    },
+    {
+      "type": "phone",
+      "amount": 399,
+      "date": "10/3/2025",
+      "time": "8:49:20 pm"
+    },
+    {
+      "type": "electricity",
+      "amount": 4250,
+      "date": "10/3/2025",
+      "time": "8:59:47 pm"
+    },
+    {
+      "type": "electricity",
+      "amount": 711,
+      "date": "10/3/2025",
+      "time": "9:03:43 pm"
+    },
+    {
+      "type": "electricity",
+      "amount": 711,
+      "date": "10/3/2025",
+      "time": "9:04:06 pm"
+    },
+    {
+      "type": "electricity",
+      "amount": 3810,
+      "date": "10/3/2025",
+      "time": "9:06:29 pm"
+    }
+  ],
+  "sai": [
+    {
+      "type": "Income Tax",
+      "amount": 125000,
+      "date": "5/3/2025",
+      "time": "9:04:12 pm"
+    },
+    {
+      "type": "House Tax",
+      "amount": 5000,
+      "date": "5/3/2025",
+      "time": "9:06:31 pm"
+    },
+    {
+      "type": "Water Tax",
+      "amount": 800,
+      "date": "5/3/2025",
+      "time": "9:07:00 pm"
+    }
+  ]
+}
