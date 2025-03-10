@@ -19,12 +19,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // ✅ Set up session management
+const FileStore = require('session-file-store')(session);
+
 app.use(session({
+    store: new FileStore({
+        path: './sessions',  // Saves sessions to a folder
+        retries: 0
+    }),
     secret: 'secretKey123',
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 30 }
 }));
+
 
 const usersFilePath = path.join(__dirname, 'users.json');
 const paymentsFilePath = path.join(__dirname, 'payments.json');
