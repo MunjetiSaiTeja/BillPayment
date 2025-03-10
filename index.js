@@ -20,6 +20,18 @@ app.use(express.json());
 
 // ✅ Set up session management
 const FileStore = require('session-file-store')(session);
+const sessionDir = path.join(__dirname, 'sessions');
+
+try {
+    if (!fs.existsSync(sessionDir)) {
+        fs.mkdirSync(sessionDir, { recursive: true });
+        console.log("✅ Created sessions directory.");
+    } else {
+        console.log("ℹ️ Sessions directory already exists.");
+    }
+} catch (err) {
+    console.error("❌ Error creating sessions directory:", err);
+}
 
 app.use(session({
     store: new FileStore({
