@@ -28,6 +28,7 @@
     "express-session": "^1.17.3",
     "ejs": "^3.1.8",
     "fs": "0.0.1-security",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "session-file-store": "^1.4.0"
   }
 }
