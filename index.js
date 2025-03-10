@@ -21,8 +21,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // ✅ Session Setup
+if (!fs.existsSync(sessionDir)) {
+    console.log("Creating sessions directory...");
+    fs.mkdirSync(sessionDir, { recursive: true });
+} else {
+    console.log("Sessions directory already exists. Skipping creation.");
+}
+
+// ✅ Set up session management
 app.use(session({
-    store: new FileStore({ path: sessionDir }),
+    store: new FileStore({
+        path: sessionDir, // Use existing session directory
+        retries: 0 // Avoid retrying on failure
+    }),
     secret: 'secretKey123',
     resave: false,
     saveUninitialized: false,
