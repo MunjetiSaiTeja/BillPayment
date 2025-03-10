@@ -179,7 +179,7 @@ app.post('/pay/:billType', (req, res) => {
     // ✅ Properly Format Tax Type (e.g., "Income Tax" instead of "Tax (income)")
     let paymentType = billType;
     if (taxType) {
-        paymentType = ${taxType.charAt(0).toUpperCase() + taxType.slice(1)} Tax; // Capitalize first letter
+        paymentType = `${taxType.charAt(0).toUpperCase() + taxType.slice(1)} Tax`; // Capitalize first letter
     }
 
     const paymentRecord = {
